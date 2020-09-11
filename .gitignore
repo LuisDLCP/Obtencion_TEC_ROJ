@@ -1,0 +1,14 @@
+# Don't track content from these folders
+docs/
+data_input/
+data_output/
+.ipynb_checkpoints/
+
+# Compiled source
+
+
+# Others
+*.dat
+*.s4
+*.ismr
+*.csv
