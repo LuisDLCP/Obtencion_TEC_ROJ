@@ -1,9 +1,11 @@
 import pandas as pd
 import datetime
 import glob
+import os 
 
 current_path = "/home/luis/Desktop/Proyects_Files/LISN/GPSs/Tareas/Obtencion_TEC/"
-input_files_path = current_path + "data_input/"
+input_files_path = current_path + "data_input/Data_set/"
+input_files_path_op = current_path + "data_input/Data_procesada/"
 output_files_path = current_path + "data_output/"
 
 # Read ISMR files
@@ -127,24 +129,25 @@ def get_PRN(svid):
     return prn
 
 # Generate lisn format file name
-def get_file_name(file_name, value):
-    station_name = file_name[:4]
-    igs15 = file_name[-12:-9] # 15 minutes prefixe 
+def get_file_name(file_name): # filename: ljic2710.20_.ismr
+    station_name = file_name[:4] # ljic 
+    #igs15 = file_name[-12:-9] # 15 minutes prefixe 
 
-    a = list(value.iloc[0,[0,1]])
-    today = str(a[0])+"-"+str(a[1])+";00:00:00" # e.g. '20-219;00:00:00'
-    fecha = datetime.datetime.strptime(today,"%y-%j;%H:%M:%S")
-    fecha = datetime.datetime.strftime(fecha,"%y-%m-%d") #e.g. '20-08-06'
-    year = fecha[:2]
-    month = fecha[3:5]
-    day = fecha[6:8]
+    YY = file_name[9:11] # 20
+    DOY = file_name[4:7] # 271
+    today = YY + "-" + DOY # e.g. '21-271'
+    fecha = datetime.datetime.strptime(today,"%y-%j")
+    fecha2 = datetime.datetime.strftime(fecha,"%y-%m-%d") #e.g. '20-08-06'
+    year = fecha2[:2]
+    month = fecha2[3:5]
+    day = fecha2[6:8]
 
-    tec_file_name = station_name + "_" + year + month + day + "_" + igs15 + ".dat"
+    tec_file_name = station_name + "_" + year + month + day + ".dat"
 
     return tec_file_name
 
 def save_csv(file_name, value):
-    TEC_name = get_file_name(file_name, value)
+    TEC_name = get_file_name(file_name)
     # Save dataFrame to csv file
     value.to_csv(output_files_path+TEC_name, sep='\t',index=False,header=False,encoding='utf-8')
     return "Ok"
@@ -152,12 +155,17 @@ def save_csv(file_name, value):
 def main():
     list_input_files = glob.glob(input_files_path+'*.ismr')
     if len(list_input_files)>0:
-        for i in range(len(list_input_files)):
-            file_name = list_input_files[i][len(input_files_path):] # Get the file's name
+        for file_i in list_input_files:
+            file_name = file_i[len(input_files_path):] # Get the file's name
 
             dframe_ismr = readISMR(file_name)
             dframe_lisn = imsr2TEC(dframe_ismr)
             save_csv(file_name, dframe_lisn)
 
+            # Move input files to a permanent directory
+            os.rename(file_i, input_files_path_op+file_name)
+
 if __name__ == '__main__':
+    print("Getting started ...")
     main()
+    print("Finished!")
