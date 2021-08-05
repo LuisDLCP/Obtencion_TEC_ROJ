@@ -1,9 +1,10 @@
+#!/usr/bin/python3.6
 import pandas as pd
 import datetime
 import glob
 import os 
 
-current_path = "/home/luis/Desktop/Proyects_Files/LISN/GPSs/Tareas/Obtencion_TEC/"
+current_path = "/home/cesar/Desktop/luisd/scripts/Obtencion_TEC/"
 input_files_path = current_path + "data_input/Data_set/"
 input_files_path_op = current_path + "data_input/Data_procesada/"
 output_files_path = current_path + "data_output/"
