@@ -8,6 +8,7 @@ current_path = "/home/cesar/Desktop/luisd/scripts/Obtencion_TEC/"
 input_files_path = current_path + "data_input/Data_set/"
 input_files_path_op = current_path + "data_input/Data_procesada/"
 output_files_path = current_path + "data_output/"
+output_files_path2 = current_path + "data_output/ToUpload/"
 
 # Read ISMR files
 def readISMR(input_file_name):
@@ -151,6 +152,7 @@ def save_csv(file_name, value):
     TEC_name = get_file_name(file_name)
     # Save dataFrame to csv file
     value.to_csv(output_files_path+TEC_name, sep='\t',index=False,header=False,encoding='utf-8')
+    value.to_csv(output_files_path2+TEC_name, sep='\t',index=False,header=False,encoding='utf-8')
     return "Ok"
 
 def main():
@@ -162,9 +164,12 @@ def main():
             dframe_ismr = readISMR(file_name)
             dframe_lisn = imsr2TEC(dframe_ismr)
             save_csv(file_name, dframe_lisn)
+            
+            # Remove input files
+            os.remove(file_i)
 
             # Move input files to a permanent directory
-            os.rename(file_i, input_files_path_op+file_name)
+            #os.rename(file_i, input_files_path_op+file_name)
 
 if __name__ == '__main__':
     print("Getting started ...")
